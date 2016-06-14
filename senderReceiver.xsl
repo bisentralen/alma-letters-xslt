@@ -7,8 +7,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 <xsl:template name="senderReceiver">
 <table cellspacing="0" cellpadding="5" border="0" width="100%">
+	<tr><td></td></tr>
 	<tr>
-		<td width="50%">
+		<td width="50%" align="left">
 
 <xsl:choose>
 		<xsl:when test="notification_data/user_for_printing">
@@ -53,19 +54,20 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 		</td>
 		<td width="50%" align="right">
+		<!--
 			<xsl:for-each select="notification_data/organization_unit">
 		<table>
 		<xsl:attribute name="style">
-			<xsl:call-template name="listStyleCss" /> <!-- style.xsl -->
+			<xsl:call-template name="listStyleCss" /> 
 		</xsl:attribute>
 			<tr><td colspan="2"><xsl:value-of select="name"/></td></tr>
 			<tr><td colspan="2"><xsl:value-of select="address/line1"/></td></tr>
 			<tr><td colspan="2"><xsl:value-of select="address/line2"/></td></tr>
 			<tr><td><xsl:value-of select="address/postal_code"/></td> <td><xsl:value-of select="address/city"/></td></tr>
 			<tr></tr>
-			<!-- <tr><td><xsl:value-of select="address/country"/></td></tr> -->
 		</table>
-	</xsl:for-each>
+		</xsl:for-each>
+		-->
 		</td>
 	</tr>
 </table>

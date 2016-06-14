@@ -42,16 +42,18 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
         <tr>
           <td> 
-            <xsl:choose>
-              <xsl:when test="notification_data/receivers/receiver/preferred_language='no'">
-                Hvis du leverer for sent, påløper purregebyr på kr 5,- pr. bok pr. dag.
-              </xsl:when>
-              <xsl:otherwise>
-                If you return the book(s) late, you will recieve a fine of 5 NOK for each book, for each day.
-              </xsl:otherwise>
-            </xsl:choose>
-        </td>
-      </tr>
+            <xsl:if test="/notification_data/receivers/receiver/user/user_group != '4'">
+              <xsl:choose>
+                <xsl:when test="notification_data/receivers/receiver/preferred_language='no'">
+                  Hvis du leverer for sent, påløper purregebyr på kr 5,- pr. bok pr. dag.
+                </xsl:when>
+                <xsl:otherwise>
+                  If you return the book(s) late, you will recieve a fine of 5 NOK for each book, for each day.
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:if>
+          </td>
+        </tr>
 
 					<br/><br/>
 

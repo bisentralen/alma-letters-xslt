@@ -1,15 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0"
-xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+xmlns:ext="http://exslt.org/common">
 
-  <xsl:include href="header.xsl" />
-  <xsl:include href="senderReceiver.xsl" />
-  <xsl:include href="mailReason.xsl" />
-  <xsl:include href="footer.xsl" />
-  <xsl:include href="style.xsl" />
-  <xsl:include href="recordTitle.xsl" />
+<xsl:include href="header.xsl" />
+<xsl:include href="senderReceiver.xsl" />
+<xsl:include href="mailReason.xsl" />
+<xsl:include href="footer.xsl" />
+<xsl:include href="style.xsl" />
+<xsl:include href="recordTitle.xsl" />
 
-  <xsl:template match="/">
+
+<xsl:template match="/">
+
+<!-- BI: Summere løpende gebyrer -->
+<xsl:variable name="x">
+	<xsl:for-each select="notification_data/loans_by_library/library_loans_for_display/item_loans/overdue_and_lost_loan_notification_display/item_loan">
+		<n><xsl:value-of select="translate(fine,' NOK','')"/></n>
+	</xsl:for-each>
+</xsl:variable>
+<xsl:variable name="runningSum">
+	<xsl:value-of select="sum(ext:node-set($x)/n)"/>
+</xsl:variable>
+
+<!-- Gebyr i Active Balance -->
+<xsl:variable name="standingFine">
+	<xsl:value-of select="translate(notification_data/total_fee,',00 NOK','.00')"/>
+</xsl:variable>
+<!-- BI slutt -->
+
     <html>
       <head>
         <xsl:call-template name="generalStyle" />
@@ -123,42 +142,75 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 			  </xsl:if>
 
-			  <xsl:if test="notification_data/organization_fee_list/string">
+			<!-- For testing
+			  <tr>
+			  	<td><xsl:value-of select="$runningSum"/></td>
+			  </tr>
+			  <tr>
+			  	<td><xsl:value-of select="notification_data/total_fee"/></td>
+			  </tr>
+			-->
+
+			  <!-- Test om Active Balance eller løpende gebyr finnes -->
+			  <xsl:if test="notification_data/total_fee != '' or $runningSum != 'NaN'">
+			  <xsl:if test="notification_data/total_fee != '' or $runningSum != 'NaN'">
+			  <!-- Test om løpende gebyr finnes -->
+			  <xsl:if test="$runningSum != '0'">
+			  	<xsl:if test="$runningSum != 'NaN'">
+			  	<tr>
+	          		<td>
+		          		<xsl:choose>
+			              <xsl:when test="notification_data/receivers/receiver/preferred_language='no'">
+			                Sum gebyr på bøker du låner nå (se tabell over): <xsl:value-of select="format-number($runningSum,'#,###.00')"/> NOK 
+			              </xsl:when>
+			              <xsl:otherwise>
+			              	Total fines on books you borrow (See table above): <xsl:value-of select="format-number($runningSum,'#,###.00')"/> NOK 
+			              </xsl:otherwise>
+			            </xsl:choose>			
+	            	</td>
+	          	</tr>
+	          	</xsl:if>
+	          </xsl:if>
+	         <xsl:if test="notification_data/total_fee != ''">
+	          	<tr>
+					<td>@@debt_message@@ <xsl:value-of select="$standingFine"/> NOK</td>
+				</tr>		
+				<tr>
+				<xsl:if test="$runningSum != '0'">
+					<td><b>@@total@@ <xsl:value-of select="format-number($runningSum + $standingFine,'#,###.00')"/> NOK
+					</b></td>
+				</xsl:if>
+				<xsl:if test="$runningSum = '0'">
+					<td><b>@@total@@ <xsl:value-of select="format-number($standingFine,'#,###.00')"/> NOK
+					</b></td>
+				</xsl:if>
+				</tr>
+			</xsl:if>
 	              <tr>
 	              	<td>
-						<b>@@debt_message@@</b>
+						
 	                </td>
-	              </tr>
-
-	              <xsl:for-each select="notification_data/organization_fee_list/string">
-	              	<tr>
-						<td><xsl:value-of select="."/></td>
-					</tr>
-	              </xsl:for-each>
-
-				  <tr>
-	              	<td>
-						<b>
-						@@total@@ <xsl:value-of select="notification_data/total_fee"/>
-						</b>
-	                </td>
-	              </tr>
+	              </tr>					
 	              	<xsl:choose>
 	              	<xsl:when test="notification_data/receivers/receiver/preferred_language='no'">
-	              		<tr><td>Betal gebyret i skranken i biblioteket, med kort eller kontanter.</td></tr>
+	              		<tr><td>Betal gebyret i skranken i biblioteket, med <xsl:choose><xsl:when test="notification_data/receivers/receiver/user/campus_code = 'BIOSL'">kort eller kontanter.</xsl:when><xsl:otherwise>Vipps eller kontanter.</xsl:otherwise></xsl:choose></td></tr>
+	              		<!--
 	              		<tr><td>Alternativt: Til kontonummer <b>8200.01.39838</b><br/>
 	              		Merk betalingen med <b>Navnet ditt</b> og <b>"Purregebyr biblioteket"</b></td></tr>
+	              		-->
 	              	</xsl:when>
 	              	<xsl:otherwise>
-	              		<tr><td>Please pay the fine at the library information desk with cash or credit card.</td></tr>
+	              		<tr><td>Please pay the fine at the library information desk with <xsl:choose><xsl:when test="notification_data/receivers/receiver/user/campus_code = 'BIOSL'">cash or credit card.</xsl:when><xsl:otherwise>cash or Vipps.</xsl:otherwise></xsl:choose></td></tr>
+	              		<!--
 	              		<tr><td>Alternatively: Pay to account no <b>8200.01.39838</b><br/>
 	              		Please include <b>Your name</b> and <b>"Purregebyr biblioteket"</b> (overdue fine library).</td></tr>
+	              		-->
 	              	</xsl:otherwise>
 	              	</xsl:choose>
 
 	            	<xsl:choose>
 		              <xsl:when test="notification_data/receivers/receiver/preferred_language='no'">
-		                <tr><td>Vi minner om at Biblioteket ilegger purregebyr etter at lånet har forfalt (kr 5,- pr. bok pr. dag). Ved tap av lånt bok, krever vi erstatning for denne.</td></tr>
+		                <tr><td>Vi minner om at biblioteket ilegger purregebyr etter at lånet har forfalt (kr 5,- pr. bok pr. dag). Ved tap av lånt bok, krever vi erstatning for denne.</td></tr>
 		              </xsl:when>
 		              <xsl:otherwise>
 		              	<tr><td>
@@ -175,7 +227,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	                </td>
 	              </tr>
 	          	-->
-
+	          </xsl:if>
 			  </xsl:if>
             </table>
 
@@ -197,6 +249,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <xsl:call-template name="myAccount" />
 		<xsl:call-template name="contactUs" />
 		<xsl:call-template name="lastFooter" />
+
+
+	  	
 
       </body>
     </html>

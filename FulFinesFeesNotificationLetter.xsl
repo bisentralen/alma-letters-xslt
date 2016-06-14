@@ -34,13 +34,6 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 				<td>
 					<!-- <h>@@dear@@ </h> <br/><br/> -->
 					<h>@@we_would_like@@ <!-- <xsl:value-of select="notification_data/organization_unit/name"/> --> 
-					<xsl:choose>
-		              	<xsl:when test="notification_data/receivers/receiver/preferred_language='no'">    BI Biblioteket
-		              	</xsl:when>
-		              	<xsl:otherwise>
-		              		BI Library
-		              	</xsl:otherwise>
-		            </xsl:choose>
 					@@debt_of@@ <b><xsl:value-of select="notification_data/total_fines_amount"/>&#160;<xsl:value-of select="notification_data/total_fines_currency"/></b>
 
 					</h>
@@ -66,7 +59,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 					<tr>
 						<td><xsl:value-of select="fine_fee_type_display"/></td>
 						<td><xsl:value-of select="fine_fee_ammount/sum"/>&#160;<xsl:value-of select="fine_fee_ammount/currency"/></td>
-						<td><xsl:value-of select="fine_comment"/></td>
+						<td><xsl:value-of select="substring(item_title/text(),1,30)"/> (...)</td>
 					</tr>
 					</xsl:for-each>
 
@@ -77,27 +70,31 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 				<!-- BIs hardkodede info om betalingsmåte: -->
 				<table>
 					<xsl:choose>
-		              	<xsl:when test="notification_data/receivers/receiver/preferred_language='no'">
-		              		<tr><td>Betal gebyret i skranken i biblioteket, med kort eller kontanter.</td></tr>
-		              		<tr><td>Alternativt: Til kontonummer <b>8200.01.39838</b><br/>
-		              		Merk betalingen med <b>Navnet ditt</b> og <b>"Purregebyr biblioteket"</b></td></tr>
-		              	</xsl:when>
-		              	<xsl:otherwise>
-		              		<tr><td>Please pay the fine at the library information desk with cash or credit card.</td></tr>
-		              		<tr><td>Alternatively: Pay to account no <b>8200.01.39838</b><br/>
-		              		Please include <b>Your name</b> and <b>"Purregebyr biblioteket"</b> (overdue fine library).</td></tr>
-		              	</xsl:otherwise>
-		            </xsl:choose>
+	              	<xsl:when test="notification_data/receivers/receiver/preferred_language='no'">
+	              		<tr><td>Betal gebyret i skranken i biblioteket, med <xsl:choose><xsl:when test="notification_data/receivers/receiver/user/campus_code = 'BIOSL'">kort eller kontanter.</xsl:when><xsl:otherwise>Vipps eller kontanter.</xsl:otherwise></xsl:choose></td></tr>
+	              		<!--
+	              		<tr><td>Alternativt: Til kontonummer <b>8200.01.39838</b><br/>
+	              		Merk betalingen med <b>Navnet ditt</b> og <b>"Purregebyr biblioteket"</b></td></tr>
+	              		-->
+	              	</xsl:when>
+	              	<xsl:otherwise>
+	              		<tr><td>Please pay the fine at the library information desk with <xsl:choose><xsl:when test="notification_data/receivers/receiver/user/campus_code = 'BIOSL'">cash or credit card.</xsl:when><xsl:otherwise>cash or Vipps.</xsl:otherwise></xsl:choose></td></tr>
+	              		<!--
+	              		<tr><td>Alternatively: Pay to account no <b>8200.01.39838</b><br/>
+	              		Please include <b>Your name</b> and <b>"Purregebyr biblioteket"</b> (overdue fine library).</td></tr>
+	              		-->
+	              	</xsl:otherwise>
+	              	</xsl:choose>
 	        	</table>
 	        	<br/><br/>
 	        	<table>
 		        	<xsl:choose>
 		              <xsl:when test="notification_data/receivers/receiver/preferred_language='no'">
-		                <tr><td>Vi minner om at Biblioteket ilegger purregebyr etter at lånet har forfalt (kr 5,- pr. bok pr. dag). Ved tap av lånt bok, krever vi erstatning for denne.</td></tr>
+		                <tr><td>Biblioteket ilegger purregebyr etter at lånet har forfalt (kr 5,- pr. bok pr. dag. Dagslån: kr 10,-). Ved tap av lånt bok, krever vi erstatning for denne.</td></tr>
 		              </xsl:when>
 		              <xsl:otherwise>
 		              	<tr><td>
-		                We would like to remind you about out policy: If you return books after the due date, you recieve a penalty fine of 5 NOK per day, for each book. If you lose the book, you have to pay for it.</td></tr>
+		                Our policy: If you return books after the due date, you recieve a penalty fine of 5 NOK per day, for each book (1-day loan: 10 NOK). If you lose the book, you have to pay for it.</td></tr>
 		              </xsl:otherwise>
 		            </xsl:choose>
 		        </table>
