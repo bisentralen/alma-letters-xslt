@@ -17,9 +17,13 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 		</head>
 
 			<body>
-			<xsl:attribute name="style">
-				<xsl:call-template name="bodyStyleCss" /> <!-- style.xsl -->
-			</xsl:attribute>
+				<xsl:if test="notification_data/receivers/sms_receiver/phone_list_str != ''">
+					<xsl:message terminate="yes">SMS sent, no need for email. </xsl:message>
+				</xsl:if>
+
+				<xsl:attribute name="style">
+					<xsl:call-template name="bodyStyleCss" /> <!-- style.xsl -->
+				</xsl:attribute>
 
 				<xsl:call-template name="head" /> <!-- header.xsl -->
 				<!-- <xsl:call-template name="senderReceiver" /> --> <!-- SenderReceiver.xsl -->
