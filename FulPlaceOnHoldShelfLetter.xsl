@@ -18,9 +18,11 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
 			<body>
 				<!-- Hvis SMS sendes, så ikke send e-post -->
+				<!--
 				<xsl:if test="notification_data/receivers/sms_receiver/phone_list_str != ''">
 					<xsl:message terminate="yes">SMS sent, no need for email. </xsl:message>
 				</xsl:if>
+			-->
 
 				<xsl:attribute name="style">
 					<xsl:call-template name="bodyStyleCss" /> <!-- style.xsl -->
