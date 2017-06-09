@@ -11,6 +11,14 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 <xsl:include href="recordTitle.xsl" />
 
 <xsl:template match="/">
+
+	<!-- Pattern for RegEx: -->
+	<xsl:variable name="re_pattern" select="'campus\s(\w+),'" />
+	<!-- String with library name -->
+	<xsl:variable name="libNameString">
+		<xsl:value-of select="/notification_data/request/calculated_destination_name"/>
+	</xsl:variable>
+
 	<html>
 		<head>
 		<xsl:call-template name="generalStyle" />
@@ -33,25 +41,41 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 				<!-- <xsl:call-template name="toWhomIsConcerned" /> --> <!-- mailReason.xsl -->
 
 
-
-					<div class="messageArea">
+				<div class="messageArea">
 				<div class="messageBody">
 					<table cellspacing="0" cellpadding="5" border="0">
 						<tr>
 							<td><b><xsl:value-of select="notification_data/receivers/receiver/user/first_name"/>&#160;<xsl:value-of select="notification_data/receivers/receiver/user/last_name"/>,</b></td>
 						</tr>
-						<tr>
-							<td>@@following_item_requested_on@@ <xsl:value-of select="notification_data/request/create_date"/>, @@can_picked_at@@ <xsl:value-of select="notification_data/request/delivery_address"/> <!-- @@circulation_desk@@ -->.</td>
-						</tr>
 
+						<tr>
+							<td>
+								@@following_item_requested_on@@ <xsl:value-of select="notification_data/request/create_date"/>, @@can_picked_at@@ BI @@circulation_desk@@,
+								<xsl:if test="contains($libNameString,'Oslo')">
+									campus Oslo.
+								</xsl:if>
+								<xsl:if test="contains($libNameString,'Bergen')">
+									campus Bergen.
+								</xsl:if>
+								<xsl:if test="contains($libNameString,'Trondheim')">
+									campus Trondheim.
+								</xsl:if>
+								<xsl:if test="contains($libNameString,'Stavanger')">
+									campus Stavanger.
+								</xsl:if>
+							</td>
+						</tr>
+						
 						<tr>
 							<td><b><xsl:call-template name="recordTitle" /> <!-- recordTitle.xsl --></b></td>
 						</tr>
 						
+						<!-- Hentefrist hvis denne finnes (ikke for artikler) -->
 						<xsl:if test="notification_data/request/work_flow_entity/expiration_date">
 						<tr>
 							<td>
-							 @@note_item_held_until@@ <xsl:value-of select="notification_data/request/work_flow_entity/expiration_date"/>.
+							 @@note_item_held_until@@ 
+							 <xsl:value-of select="notification_data/request/work_flow_entity/expiration_date"/>.
 							 </td>
 						</tr>
 						</xsl:if>

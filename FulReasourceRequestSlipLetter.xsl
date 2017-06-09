@@ -66,8 +66,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 							</tr>
 						</xsl:if>
 	
-                                                 <tr>
-							<table cellpadding="5" class="listing">
+                        <tr>
+						<table cellpadding="5" class="listing">
 								<xsl:attribute name="style">
 									<xsl:call-template name="mainTableStyleCss" /> <!-- style.xsl -->
 								</xsl:attribute>
@@ -90,8 +90,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 										<td><xsl:value-of select="public_note"/></td>
 									</tr>
 								</xsl:for-each>
-		          			      	</table>
-                                                 </tr>
+		          		</table>
+                        </tr>
 
 
 
@@ -131,33 +131,40 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 						</xsl:if>
 						-->
 
-						<tr>
-							<td><xsl:call-template name="recordTitle" />
-							</td>
-						</tr>
 
-							<xsl:if test="notification_data/phys_item_display/isbn != ''">
-								<tr>
-								<td>@@isbn@@: <xsl:value-of select="notification_data/phys_item_display/isbn"/></td>
-								</tr>
-							</xsl:if>
-							<xsl:if test="notification_data/phys_item_display/issn != ''">
-								<tr>
-								<td>@@issn@@: <xsl:value-of select="notification_data/phys_item_display/issn"/></td>
-								</tr>
-							</xsl:if>
-							<xsl:if test="notification_data/phys_item_display/edition != ''">
-								<tr>
-								<td>@@edition@@: <xsl:value-of select="notification_data/phys_item_display/edition"/></td>
-								</tr>
-							</xsl:if>
-							<!--
-							<xsl:if test="notification_data/phys_item_display/imprint != ''">
-								<tr>
-								<td>@@imprint@@: <xsl:value-of select="notification_data/phys_item_display/imprint"/></td>
-								</tr>
-							</xsl:if>
-							-->
+						<!-- <xsl:call-template name="recordTitle" /> -->
+				
+						<xsl:if test="notification_data/phys_item_display/title_abcnph != ''">
+							<tr><td><xsl:value-of select="notification_data/phys_item_display/title_abcnph"/></td></tr>
+						</xsl:if>
+						<br/>
+						<xsl:if test="notification_data/phys_item_display/issue_level_description != ''">
+							<tr><td><xsl:value-of select="notification_data/phys_item_display/issue_level_description"/></td></tr>
+						</xsl:if>
+					
+						<br/>
+						<xsl:if test="notification_data/phys_item_display/isbn != ''">
+							<tr>
+							<td>@@isbn@@: <xsl:value-of select="notification_data/phys_item_display/isbn"/></td>
+							</tr>
+						</xsl:if>
+						<xsl:if test="notification_data/phys_item_display/issn != ''">
+							<tr>
+							<td>@@issn@@: <xsl:value-of select="notification_data/phys_item_display/issn"/></td>
+							</tr>
+						</xsl:if>
+						<xsl:if test="notification_data/phys_item_display/edition != ''">
+							<tr>
+							<td>@@edition@@: <xsl:value-of select="notification_data/phys_item_display/edition"/></td>
+							</tr>
+						</xsl:if>
+						<!--
+						<xsl:if test="notification_data/phys_item_display/imprint != ''">
+							<tr>
+							<td>@@imprint@@: <xsl:value-of select="notification_data/phys_item_display/imprint"/></td>
+							</tr>
+						</xsl:if>
+						-->
 						<b></b>
 						<tr>
 							<td><h2><b>@@location@@: </b><xsl:value-of select="notification_data/phys_item_display/location_name"/></h2></td>
